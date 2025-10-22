@@ -23,8 +23,7 @@ public class TripController {
     public Trip saveTrip(@RequestBody @Validated TripDTO body, BindingResult validationResult){
         if(validationResult.hasErrors()){
             throw new ValidationException(validationResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
-        }
-        return tripService.saveTrip(body);
+        }return tripService.saveTrip(body);
     }
 
     @GetMapping

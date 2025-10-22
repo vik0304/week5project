@@ -17,16 +17,16 @@ public class TripService {
 
     public Page<Trip> findAll(int pageN){
         Pageable pageable = PageRequest.of(pageN, 25);
-        return this.tripRepository.findAll(pageable);
+        return tripRepository.findAll(pageable);
     }
 
     public Trip findById(long id){
-        return this.tripRepository.findById(id).orElseThrow(()->new NotFoundException("L'id inserito è errato o non esiste in db."));
+        return tripRepository.findById(id).orElseThrow(()->new NotFoundException("L'id inserito è errato o non esiste in db."));
     }
 
     public Trip saveTrip(TripDTO payload){
         Trip newTrip = new Trip(payload.destination(), payload.date(), payload.state());
-        return this.tripRepository.save(newTrip);
+        return tripRepository.save(newTrip);
     }
 
     public Trip findByIdAndUpdate(long id, TripDTO payload){
@@ -39,6 +39,6 @@ public class TripService {
 
     public void findAndDelete(long id){
         Trip found = findById(id);
-        this.tripRepository.delete(found);
+        tripRepository.delete(found);
     }
 }
