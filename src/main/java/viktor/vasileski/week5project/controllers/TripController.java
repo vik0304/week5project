@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import viktor.vasileski.week5project.entities.Trip;
 import viktor.vasileski.week5project.exceptions.ValidationException;
 import viktor.vasileski.week5project.payloads.TripDTO;
+import viktor.vasileski.week5project.payloads.TripStatusDTO;
 import viktor.vasileski.week5project.services.TripService;
 
 @RestController
@@ -46,5 +47,12 @@ public class TripController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable long id){
         tripService.findAndDelete(id);
+    }
+
+    @PatchMapping("/{id}/stato")
+    public Trip updateStatus(@PathVariable long id, @RequestBody @Validated TripStatusDTO payload, BindingResult validationResult){
+        if(validationResult.hasErrors()){
+            throw new ValidationException(validationResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
+        }return tripService.updateStatus(id, payload);
     }
 }

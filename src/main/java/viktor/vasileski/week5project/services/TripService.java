@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import viktor.vasileski.week5project.entities.Trip;
 import viktor.vasileski.week5project.exceptions.NotFoundException;
 import viktor.vasileski.week5project.payloads.TripDTO;
+import viktor.vasileski.week5project.payloads.TripStatusDTO;
 import viktor.vasileski.week5project.repositories.TripRepository;
 
 @Service
@@ -40,5 +41,11 @@ public class TripService {
     public void findAndDelete(long id){
         Trip found = findById(id);
         tripRepository.delete(found);
+    }
+
+    public Trip updateStatus(long id, TripStatusDTO payload){
+        Trip found = findById(id);
+        found.setState(payload.state());
+        return tripRepository.save(found);
     }
 }
