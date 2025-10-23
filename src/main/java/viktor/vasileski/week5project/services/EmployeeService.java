@@ -1,19 +1,32 @@
 package viktor.vasileski.week5project.services;
 
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import viktor.vasileski.week5project.entities.Employee;
+import viktor.vasileski.week5project.exceptions.BadRequestException;
 import viktor.vasileski.week5project.exceptions.NotFoundException;
 import viktor.vasileski.week5project.payloads.EmployeeDTO;
 import viktor.vasileski.week5project.repositories.EmployeeRepository;
+import com.cloudinary.Cloudinary;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private Cloudinary imageUploader;
+
+    private static final long MAX_SIZE = 2 * 1024 * 1024;
+    private static final List<String> ALLOWED_TYPES = List.of("image/png","image/jpeg");
 
     public Page<Employee> findAll(int pageN){
         Pageable pageable = PageRequest.of(pageN, 25);
@@ -44,4 +57,18 @@ public class EmployeeService {
     }
 
     //TODO:patch add avatar
+    public Employee uploadAvatar(long id, MultipartFile file){
+        Employee found = findById(id);
+        if(file.isEmpty()) throw new BadRequestException("Non si può caricare un file vuoto");
+        if (file.getSize() > MAX_SIZE) throw new BadRequestException("File troppo grande, il massimo consentito è 2mb.");
+        if (!ALLOWED_TYPES.contains(file.getContentType())) throw new BadRequestException("Inserire file di formato png/jpeg.");
+        try {
+            Map result = imageUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String imageURL= (String) result.get("url");
+            found.setAvatar(imageURL);
+            return employeeRepository.save(found);
+        } catch(IOException e){
+            throw new BadRequestException("Errore durante il caricamento dell'avatar");
+        }
+    }
 }
