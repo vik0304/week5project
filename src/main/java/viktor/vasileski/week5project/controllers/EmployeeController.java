@@ -7,10 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import viktor.vasileski.week5project.entities.Employee;
 import viktor.vasileski.week5project.exceptions.ValidationException;
 import viktor.vasileski.week5project.payloads.EmployeeDTO;
 import viktor.vasileski.week5project.services.EmployeeService;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/employees")
@@ -48,5 +51,10 @@ public class EmployeeController {
         employeeService.findAndDelete(id);
     }
 
-    //TODO: patch avatar con cloudinary
+    @PatchMapping("/{id}/avatar")
+    public Employee uploadAvatar(@RequestParam("avatar")MultipartFile file, @PathVariable long id) throws IOException {
+        System.out.println(file.getSize());
+        System.out.println(file.getName());
+        return this.employeeService.uploadAvatar(id, file);
+    }
 }

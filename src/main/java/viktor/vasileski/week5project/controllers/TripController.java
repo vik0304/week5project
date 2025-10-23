@@ -49,7 +49,7 @@ public class TripController {
         tripService.findAndDelete(id);
     }
 
-    @PatchMapping("/{id}/stato")
+    @PatchMapping("/{id}/status")
     public Trip updateStatus(@PathVariable long id, @RequestBody @Validated TripStatusDTO payload, BindingResult validationResult){
         if(validationResult.hasErrors()){
             throw new ValidationException(validationResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
