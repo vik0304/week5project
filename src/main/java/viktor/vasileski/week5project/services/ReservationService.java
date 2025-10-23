@@ -43,5 +43,19 @@ public class ReservationService {
         return reservationRepository.save(newReservation);
     }
 
+    public Reservation findByIdAndUpdate(UUID id, ReservationDTO payload){
+        Reservation foundReservation = findById(id);
+        Trip foundTrip = tripService.findById(payload.tripId());
+        Employee foundEmployee = employeeService.findById(payload.employeeId());
+        foundReservation.setEmployee(foundEmployee);
+        foundReservation.setTrip(foundTrip);
+        foundReservation.setPreferences(payload.preferences());
+        foundReservation.setRequestDate(payload.requestDate());
+        return reservationRepository.save(foundReservation);
+    }
 
+    public void findByIdAndDelete(UUID id){
+        Reservation found = findById(id);
+        reservationRepository.delete(found);
+    }
 }
